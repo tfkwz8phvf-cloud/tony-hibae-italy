@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0a0a0a" />
+<title>TONY × HIBAE — Italy 6/9-15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0a;
+    --panel:#141414;
+    --panel-2:#1a1a1a;
+    --border:#262626;
+    --text:#e8e4dc;
+    --muted:#888;
+    --dim:#555;
+    --pink:#ff5b8a;
+    --green:#5cb85c;
+    --amber:#f0a35e;
+    --cyan:#5ec4d6;
+    --red:#e04848;
+  }
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;background-image:radial-gradient(circle at 20% 0%,rgba(255,91,138,0.06),transparent 50%),radial-gradient(circle at 80% 100%,rgba(94,196,214,0.04),transparent 50%)}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .container{max-width:880px;margin:0 auto;padding:24px 18px 80px}
+  header{padding:32px 0 24px;border-bottom:1px solid var(--border);margin-bottom:24px}
+  .brand{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.2em;margin-bottom:12px}
+  .brand .pulse{display:inline-block;width:6px;height:6px;background:var(--pink);border-radius:50%;margin-right:8px;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,91,138,0.4)}50%{opacity:0.6;box-shadow:0 0 0 8px rgba(255,91,138,0)}}
+  h1{font-size:30px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+  h1 .heart{color:var(--pink);font-weight:400;margin:0 6px}
+  .subtitle{color:var(--muted);font-size:14px}
+  .countdown{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+  .cd-cell{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:64px;text-align:center}
+  .cd-num{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);line-height:1}
+  .cd-label{font-size:10px;color:var(--dim);letter-spacing:0.15em;margin-top:6px;text-transform:uppercase}
+  .tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:24px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:1;min-width:fit-content;padding:10px 14px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border-radius:8px;transition:all 0.15s;white-space:nowrap}
+  .tab.active{background:var(--panel-2);color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+  .tab:hover:not(.active){color:var(--text)}
+  .panel{display:none}
+  .panel.active{display:block;animation:fade 0.2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .day{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+  .day-head{display:flex;align-items:center;gap:14px;padding:18px;cursor:pointer;user-select:none}
+  .day-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:0.15em;width:50px}
+  .day-info{flex:1;min-width:0}
+  .day-title{font-size:15px;font-weight:600;margin-bottom:2px}
+  .day-sub{font-size:12px;color:var(--muted)}
+  .day-toggle{color:var(--dim);transition:transform 0.2s;font-family:'JetBrains Mono',monospace}
+  .day.open .day-toggle{transform:rotate(90deg)}
+  .day-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border)}
+  .day.open .day-body{display:block}
+  .schedule{margin-top:16px}
+  .row{display:flex;gap:14px;padding:8px 0;font-size:13px;border-bottom:1px dashed var(--border)}
+  .row:last-child{border-bottom:none}
+  .row-time{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:12px;width:64px;flex-shrink:0;font-weight:500}
+  .row-text{flex:1;color:var(--text)}
+  .row-text b{font-weight:600;color:var(--text)}
+  .stay{margin-top:14px;padding:10px 12px;background:var(--panel-2);border-radius:8px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .stay .key{color:var(--pink)}
+  .checklist{display:flex;flex-direction:column;gap:8px}
+  .check{display:flex;align-items:center;gap:14px;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s}
+  .check:hover{border-color:var(--dim)}
+  .check.done{opacity:0.55}
+  .checkbox{width:20px;height:20px;border:1.5px solid var(--dim);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+  .check.done .checkbox{background:var(--green);border-color:var(--green)}
+  .check.done .checkbox::after{content:'✓';color:#000;font-weight:700;font-size:13px}
+  .check-info{flex:1;min-width:0}
+  .check-title{font-size:14px;font-weight:500;margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .check.done .check-title-text{text-decoration:line-through;color:var(--muted)}
+  .check-meta{font-size:12px;color:var(--muted)}
+  .check-cost{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--amber);font-weight:600}
+  .pri{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;padding:3px 6px;border-radius:4px}
+  .pri-now{background:rgba(224,72,72,0.18);color:var(--red)}
+  .pri-week{background:rgba(240,163,94,0.15);color:var(--amber)}
+  .pri-later{background:rgba(94,196,214,0.12);color:var(--cyan)}
+  .budget-card{background:linear-gradient(135deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+  .b-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .b-label{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;text-transform:uppercase}
+  .b-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600}
+  .b-val.big{font-size:28px;color:var(--pink)}
+  .b-val.green{color:var(--green)}
+  .b-val.amber{color:var(--amber)}
+  .progress{height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:12px}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--amber));transition:width 0.3s;border-radius:99px}
+  .progress-fill.over{background:var(--red)}
+  .add-form{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px}
+  .add-form input,.add-form select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:inherit;font-size:14px;outline:none;width:100%}
+  .add-form input:focus,.add-form select:focus{border-color:var(--cyan)}
+  .form-row{display:flex;gap:8px}
+  .form-row > *{flex:1}
+  .btn{background:var(--pink);color:#fff;border:none;padding:11px 16px;border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
+  .btn:hover{opacity:0.85}
+  .expenses-list{margin-top:14px}
+  .exp{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+  .exp-cat{font-size:18px;width:28px;text-align:center}
+  .exp-info{flex:1;min-width:0}
+  .exp-title{font-size:14px;font-weight:500;word-break:break-word}
+  .exp-meta{font-size:11px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace}
+  .exp-amt{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--amber)}
+  .exp-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:18px;padding:4px 8px}
+  .exp-del:hover{color:var(--red)}
+  .empty{text-align:center;color:var(--muted);padding:32px;font-size:13px}
+  .cat-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:14px}
+  .cat-cell{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+  .cat-cell-label{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em}
+  .cat-cell-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;margin-top:4px}
+  .info-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px}
+  .info-card h3{font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:8px}
+  .info-card h3 .ico{font-size:16px}
+  .info-row{display:flex;gap:12px;padding:7px 0;font-size:13px}
+  .info-row .k{color:var(--muted);width:90px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .info-row .v{flex:1;color:var(--text);word-break:break-word}
+  .spot{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+  .spot-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+  .spot-name{font-weight:600;font-size:14px}
+  .spot-tag{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;padding:3px 7px;border-radius:4px;background:var(--panel-2);color:var(--muted);flex-shrink:0;text-transform:uppercase}
+  .spot-tag.must{background:rgba(255,91,138,0.18);color:var(--pink)}
+  .spot-desc{font-size:12px;color:var(--muted);line-height:1.5}
+  .city-h{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:0.2em;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+  .city-h:first-child{margin-top:0}
+  footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);text-align:center;color:var(--dim);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em}
+  footer .heart{color:var(--pink)}
+  @media (max-width:560px){
+    h1{font-size:24px}
+    .container{padding:16px 14px 60px}
+    .tab{font-size:12px;padding:9px 11px}
+    .row-time{width:54px}
+    .info-row .k{width:72px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="brand"><span class="pulse"></span>SYS::TARA / TRIP::IT-2026</div>
+  <h1>TONY <span class="heart">♥</span> HIBAE</h1>
+  <div class="subtitle">이태리 워케이션 · 6박 7일 · 2026.06.09 → 06.15</div>
+  <div class="countdown" id="countdown">
+    <div class="cd-cell"><div class="cd-num" id="cd-d">--</div><div class="cd-label">DAYS</div></div>
+    <div class="cd-cell"><div class="cd-num" id="cd-h">--</div><div class="cd-label">HOURS</div></div>
+    <div class="cd-cell"><div class="cd-num" id="cd-m">--</div><div class="cd-label">MIN</div></div>
+    <div class="cd-cell"><div class="cd-num" id="cd-s">--</div><div class="cd-label">SEC</div></div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="itinerary">📅 일정</button>
+  <button class="tab" data-tab="bookings">✓ 예약</button>
+  <button class="tab" data-tab="expenses">€ 가계부</button>
+  <button class="tab" data-tab="info">ⓘ 정보</button>
+  <button class="tab" data-tab="spots">★ 장소</button>
+</nav>
+
+<section class="panel active" data-panel="itinerary" id="itinerary"></section>
+<section class="panel" data-panel="bookings"><div class="checklist" id="checklist"></div></section>
+<section class="panel" data-panel="expenses">
+  <div class="budget-card">
+    <div class="b-row"><div class="b-label">예산</div><div class="b-val" id="budget-total">€2,212</div></div>
+    <div class="b-row"><div class="b-label">사용</div><div class="b-val amber" id="budget-spent">€0</div></div>
+    <div class="b-row"><div class="b-label">남음</div><div class="b-val big green" id="budget-left">€2,212</div></div>
+    <div class="progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <form class="add-form" id="exp-form">
+    <input type="text" id="exp-title" placeholder="지출 항목 (예: Bellagio 페리)" required maxlength="80" />
+    <div class="form-row">
+      <input type="number" id="exp-amt" placeholder="€ 금액" step="0.01" min="0" max="99999" required />
+      <select id="exp-cat">
+        <option value="🍝">🍝 식비</option>
+        <option value="🚆">🚆 교통</option>
+        <option value="🏨">🏨 숙박</option>
+        <option value="🎫">🎫 액티비티</option>
+        <option value="🛍">🛍 쇼핑</option>
+        <option value="☕">☕ 카페</option>
+        <option value="📦">📦 기타</option>
+      </select>
+    </div>
+    <button class="btn" type="submit">+ 추가</button>
+  </form>
+  <div class="cat-summary" id="cat-summary"></div>
+  <div class="expenses-list" id="expenses-list"></div>
+</section>
+<section class="panel" data-panel="info" id="info-panel"></section>
+<section class="panel" data-panel="spots" id="spots-panel"></section>
+
+<footer>CRAFTED BY TARA <span class="heart">♥</span> FOR TONY × HIBAE</footer>
+
+</div>
+
+<script>
+const TRIP = {
+  start: '2026-06-09T12:00:00+02:00',
+  budget: 2212,
+  days: [
+    { n:1, date:'6/9 (화)', title:'Köln → Bellano', sub:'비행 + 운전 + 호수 마을 도착', stay:'Bellano Airbnb · Frazione Bonzeno 22',
+      schedule:[
+        ['12:00','Köln 공항 출발 (Ryanair FR5532)',true],
+        ['13:30','Bergamo (BGY) 도착',true],
+        ['14:30','렌트카 픽업 (Auto Europe / Alamo)',false],
+        ['15:00','Bergamo → Bellano 운전 (1.5시간)',false],
+        ['16:30','Bellano 도착 · 분홍 큰 집 주차장 → 호스트 콜 → 체크인',true],
+        ['18:00','Bellano 마을 산책 + Orrido di Bellano (협곡 폭포 €5)',false],
+        ['20:00','디너 (Il Marinaio 또는 페리로 Varenna)',false]
+      ]},
+    { n:2, date:'6/10 (수)', title:'Bellano + 페리 호핑', sub:'Varenna · Bellagio · Villa del Balbianello', stay:'Bellano Airbnb',
+      schedule:[
+        ['08:00','워케이션 1.5h (Airbnb)',false],
+        ['10:00','페리 Bellano → Varenna (5분)',true],
+        ['10:30','Villa Monastero 정원 산책',false],
+        ['12:30','점심 — Il Cavatappi (미슐랭 추천)',false],
+        ['14:00','페리 Varenna → Bellagio (15분)',true],
+        ['14:30','Bellagio 마을 + Villa Melzi 정원',false],
+        ['16:00','페리 → Villa del Balbianello (007 촬영지, €22/인 · 예약 필수)',true],
+        ['18:30','Bellano 복귀',false],
+        ['20:00','Bellano 디너',false]
+      ]},
+    { n:3, date:'6/11 (목)', title:'Lugano 스위스 당일치기', sub:'Monte San Salvatore + 호숫가', stay:'Bellano Airbnb (마지막 밤)',
+      schedule:[
+        ['08:00','워케이션 1.5h',false],
+        ['10:00','차로 Lugano 출발 (1시간, 국경 통과)',true],
+        ['11:00','Lugano 도착 — Monte San Salvatore 산악열차',false],
+        ['13:00','점심 (스위스 가격 주의 €30/인)',false],
+        ['14:30','Lugano 호숫가 산책, 쇼핑',false],
+        ['17:00','Bellano 복귀',false],
+        ['19:00','마지막 호수 디너',false]
+      ]},
+    { n:4, date:'6/12 (금)', title:'Bellano → Milano → Bologna', sub:'차 반납 + 고속열차 + 미식 도착', stay:'Bologna Airbnb',
+      schedule:[
+        ['08:00','아침 + 짐 정리 + 마지막 워케이션 1h',false],
+        ['10:30','Airbnb 체크아웃 → Milano Linate 출발 (1.5시간)',true],
+        ['13:00','렌트카 반납 (Linate Airport)',true],
+        ['13:30','M4 지하철 → Milano Centrale (15분)',false],
+        ['14:30','Duomo 광장 빠르게 + 점심',false],
+        ['15:30','Frecciarossa Milano → Bologna (1시간)',true],
+        ['16:30','Bologna 도착 · Airbnb 체크인',true],
+        ['18:00','Piazza Maggiore + Asinelli 탑 (예약 필요)',false],
+        ['20:00','Trattoria Anna Maria — Tagliatelle al ragù (예약 필수)',false]
+      ]},
+    { n:5, date:'6/13 (토)', title:'Bologna 풀데이 — 미식', sub:'시장 + 두 탑 + 포르티코', stay:'Bologna Airbnb (마지막 밤)',
+      schedule:[
+        ['08:00','카페 워케이션 (Caffè Terzi)',false],
+        ['10:00','Quadrilatero 시장 — 모르타델라/파마산/발사믹 시식',true],
+        ['12:30','Mercato di Mezzo 미식 점심',false],
+        ['14:00','산토 스테파노 광장 + 7개 교회',false],
+        ['15:30','포르티코 산책 (UNESCO 명물 지붕 골목)',false],
+        ['(옵션)','Modena 당일치기 (기차 30분, 발사믹 본고장)',false],
+        ['20:00','Osteria dell\'Orsa 디너',false]
+      ]},
+    { n:6, date:'6/14 (일)', title:'Bologna → Bergamo', sub:'기차 이동 + Città Alta 마지막 밤', stay:'Bergamo Airbnb',
+      schedule:[
+        ['08:00','카페 워케이션 1-2h (Forno Brisa)',false],
+        ['10:30','Airbnb 체크아웃, 마지막 산책',false],
+        ['12:00','점심 (호텔 근처)',false],
+        ['13:30','Bologna → Milano (1h) → 환승 → Bergamo (50분)',true],
+        ['16:30','Bergamo 도착 → Airbnb 체크인',true],
+        ['17:00','Funicolare 케이블카 → Città Alta',false],
+        ['17:30','Piazza Vecchia, Santa Maria Maggiore',false],
+        ['18:30','성벽 산책 (UNESCO) — 알프스 노을',false],
+        ['20:00','Città Alta 디너',false],
+        ['22:00','짐 싸고 일찍 취침',false]
+      ]},
+    { n:7, date:'6/15 (월)', title:'귀환 — Bergamo → Köln', sub:'새벽 비행', stay:'— (집)',
+      schedule:[
+        ['04:30','기상, 빠른 체크아웃',false],
+        ['05:00','택시 → BGY 공항 (10-15분, €15-25)',true],
+        ['05:20','공항 도착, 보안 통과',false],
+        ['06:50','Ryanair → Köln (1시간 25분)',true],
+        ['08:15','Köln 도착 🏠',true]
+      ]}
+  ],
+  bookings: [
+    {id:'ryanair', title:'Ryanair 왕복 항공', meta:'Köln ↔ Bergamo · 6/9·6/15', cost:70, priority:'now', done:true},
+    {id:'bellano', title:'Bellano Airbnb 3박', meta:'Frazione Bonzeno 22 · 6/9-12', cost:325, priority:'now', done:true},
+    {id:'rental', title:'렌트카 (Auto Europe via Check24)', meta:'BGY 픽업 → Linate 반납 · 풀커버', cost:282, priority:'now', done:false},
+    {id:'bologna', title:'Bologna Airbnb 2박', meta:'6/12-14 · 위치/평점 확인 후', cost:194, priority:'now', done:false},
+    {id:'bergamo', title:'Bergamo Airbnb 1박', meta:'6/14-15 · 5⭐ 12후기', cost:81, priority:'now', done:false},
+    {id:'train1', title:'Frecciarossa Milano→Bologna', meta:'6/12 15:30 · 미리 €19-29 vs 당일 €60+', cost:60, priority:'week', done:false},
+    {id:'train2', title:'기차 Bologna→Bergamo', meta:'6/14 오후 · 환승 Milano', cost:100, priority:'week', done:false},
+    {id:'balbianello', title:'Villa del Balbianello', meta:'6/10 · fondoambiente.it · 시간 지정', cost:44, priority:'week', done:false},
+    {id:'asinelli', title:'Asinelli 탑 (Bologna)', meta:'6/12 또는 6/13 · duetorribologna.com', cost:10, priority:'week', done:false},
+    {id:'rest1', title:'Trattoria Anna Maria 예약', meta:'6/12 저녁 · Bologna · Tagliatelle al ragù', cost:0, priority:'later', done:false},
+    {id:'rest2', title:'Osteria dell\'Orsa 예약', meta:'6/13 저녁 · Bologna', cost:0, priority:'later', done:false},
+    {id:'rest3', title:'Il Cavatappi 예약', meta:'6/10 점심 · Varenna', cost:0, priority:'later', done:false},
+    {id:'food-tour', title:'(옵션) Bologna 미식 워킹 투어', meta:'6/13 · €60/인 · 4시간 6-8곳 시식', cost:120, priority:'later', done:false}
+  ],
+  info: {
+    flights:[
+      ['항공편','Ryanair'],
+      ['출발','6/9 화 12:00 Köln (CGN)'],
+      ['도착','6/9 화 13:30 Bergamo (BGY)'],
+      ['귀환 출발','6/15 월 06:50 Bergamo (BGY)'],
+      ['귀환 도착','6/15 월 08:15 Köln (CGN)']
+    ],
+    rental:[
+      ['공급사','Auto Europe / Alamo (Check24)'],
+      ['차종','VW Polo 동급 (자동, 에어컨)'],
+      ['픽업','6/9 화 15:00 · Bergamo (BGY) 터미널'],
+      ['반납','6/12 금 13:00 · Milano Linate (LIN) 터미널'],
+      ['보험','풀커버 (자기부담금 €0)'],
+      ['보증금','€500'],
+      ['취소','24h 전 무료']
+    ],
+    bellano:[
+      ['주소','Frazione Bonzeno 22, Bellano LC 23822'],
+      ['체크인','6/9 15:00부터 (flexible)'],
+      ['체크아웃','6/12 11:00까지 (flexible)'],
+      ['주차','주차장 15대 + 위쪽 작은 주차장'],
+      ['표시','분홍색 + 해시계 있는 큰 집'],
+      ['도착시','SMS로 호스트 콜']
+    ],
+    emergency:[
+      ['응급 (이태리)','112'],
+      ['Ambulance','118'],
+      ['한국 영사관 (Milano)','+39 02 2906 6905'],
+      ['도난 신고','113 (Polizia)'],
+      ['약국','녹십자 표시']
+    ],
+    apps:[
+      ['Trenitalia','기차표 예약/QR'],
+      ['Navigazione Lago di Como','호수 페리 시간표'],
+      ['Google Maps Offline','인터넷 끊겨도 OK'],
+      ['Splitwise','둘이서 비용 분담']
+    ]
+  },
+  spots: {
+    Como: [
+      {name:'Villa del Balbianello', tag:'must', desc:'007 카지노 로얄 + 스타워즈 촬영지. 페리에서 절벽 정원으로 올라가는 풍경 미친다. 6/10 예약 필수.'},
+      {name:'Villa Monastero (Varenna)', tag:'필수', desc:'호숫가 길게 늘어진 식물원, 산책 코스 압권.'},
+      {name:'Villa Melzi (Bellagio)', tag:'필수', desc:'19세기 신고전 정원. 호숫가 카페 같이.'},
+      {name:'Orrido di Bellano', tag:'추천', desc:'협곡 사이 폭포 위 보드워크 €5. Bellano 특산.'},
+      {name:'Lugano (스위스)', tag:'추천', desc:'차로 1시간. Monte San Salvatore 산악열차 + 호수 산책.'},
+      {name:'Bilacus (Bellagio)', tag:'식당', desc:'클래식 트라토리아, 호숫가 테라스. 예약 필수.'},
+      {name:'Il Cavatappi (Varenna)', tag:'식당', desc:'미슐랭 추천. 작은 와인 트라토리아.'}
+    ],
+    Bologna: [
+      {name:'Quadrilatero', tag:'must', desc:'중세 시장 거리. 모르타델라/파마산/발사믹 시식 천국. 아침이 베스트.'},
+      {name:'Asinelli 탑', tag:'must', desc:'두 탑 중 오를 수 있는 거. 498계단. 시간 지정 예약 필수.'},
+      {name:'Mercato di Mezzo', tag:'필수', desc:'실내 푸드 마켓. 트라토리아 작은 가게들 모음.'},
+      {name:'포르티코 (Portici)', tag:'필수', desc:'UNESCO 등재 지붕 골목 38km. Bologna 산책 = 포르티코 산책.'},
+      {name:'산토 스테파노 광장', tag:'추천', desc:'7개 교회 합쳐진 미스터리한 광장.'},
+      {name:'Trattoria Anna Maria', tag:'식당', desc:'Tagliatelle al ragù 정통. 1주 전 예약 필수.'},
+      {name:'Osteria dell\'Orsa', tag:'식당', desc:'학생 도시 가성비 + 본격 미식. 줄설 수 있음.'},
+      {name:'Modena 당일치기', tag:'옵션', desc:'기차 30분. 발사믹 식초 본고장 + Osteria Francescana.'}
+    ],
+    Bergamo: [
+      {name:'Città Alta (구도심)', tag:'must', desc:'케이블카 1.30€로 올라감. UNESCO 성벽.'},
+      {name:'Piazza Vecchia', tag:'필수', desc:'중세 광장 + 분수. 야경 압권.'},
+      {name:'성벽 산책', tag:'필수', desc:'알프스 노을 뷰. 저녁 시간 추천.'},
+      {name:'Santa Maria Maggiore', tag:'추천', desc:'바실리카 + 황금 모자이크.'}
+    ]
+  }
+};
+
+// ============= SAFE DOM HELPERS (no innerHTML for user/dynamic data) =============
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+function el(tag, opts){
+  const e = document.createElement(tag);
+  if(!opts) return e;
+  if(opts.cls) e.className = opts.cls;
+  if(opts.text != null) e.textContent = String(opts.text);
+  if(opts.attrs) for(const k in opts.attrs) e.setAttribute(k, opts.attrs[k]);
+  if(opts.children) opts.children.forEach(c => c && e.appendChild(c));
+  return e;
+}
+
+// ============= ITINERARY =============
+function renderItinerary(){
+  const root = $('#itinerary');
+  root.replaceChildren();
+  TRIP.days.forEach((d, i) => {
+    const day = el('div', {cls:'day' + (i===0?' open':''), attrs:{'data-day':i}});
+    const head = el('div', {cls:'day-head', children:[
+      el('div', {cls:'day-num mono', text:'DAY ' + String(d.n).padStart(2,'0')}),
+      el('div', {cls:'day-info', children:[
+        el('div', {cls:'day-title', text:d.title}),
+        el('div', {cls:'day-sub', text:d.date + ' · ' + d.sub})
+      ]}),
+      el('div', {cls:'day-toggle mono', text:'›'})
+    ]});
+    head.addEventListener('click', () => day.classList.toggle('open'));
+    const sched = el('div', {cls:'schedule'});
+    d.schedule.forEach(([t, txt, bold]) => {
+      const txtEl = el('div', {cls:'row-text'});
+      if(bold){
+        const b = el('b', {text:txt});
+        txtEl.appendChild(b);
+      } else {
+        txtEl.textContent = txt;
+      }
+      sched.appendChild(el('div', {cls:'row', children:[
+        el('div', {cls:'row-time', text:t}),
+        txtEl
+      ]}));
+    });
+    const stay = el('div', {cls:'stay', children:[
+      el('span', {cls:'key', text:'STAY'})
+    ]});
+    stay.appendChild(document.createTextNode(' · ' + d.stay));
+    const body = el('div', {cls:'day-body', children:[sched, stay]});
+    day.append(head, body);
+    root.appendChild(day);
+  });
+}
+
+// ============= BOOKINGS =============
+function renderBookings(){
+  const saved = JSON.parse(localStorage.getItem('bookings') || '{}');
+  const root = $('#checklist');
+  root.replaceChildren();
+  TRIP.bookings.forEach(b => {
+    const done = saved[b.id] !== undefined ? saved[b.id] : b.done;
+    const priLabel = {now:'NOW', week:'WEEK', later:'LATER'}[b.priority];
+    const titleEl = el('div', {cls:'check-title', children:[
+      el('span', {cls:'check-title-text', text:b.title}),
+      el('span', {cls:'pri pri-' + b.priority, text:priLabel})
+    ]});
+    const children = [
+      el('div', {cls:'checkbox'}),
+      el('div', {cls:'check-info', children:[
+        titleEl,
+        el('div', {cls:'check-meta', text:b.meta})
+      ]})
+    ];
+    if(b.cost) children.push(el('div', {cls:'check-cost', text:'€' + b.cost}));
+    const row = el('div', {cls:'check' + (done?' done':''), attrs:{'data-id':b.id}, children});
+    row.addEventListener('click', () => {
+      const cur = JSON.parse(localStorage.getItem('bookings') || '{}');
+      cur[b.id] = !row.classList.contains('done');
+      localStorage.setItem('bookings', JSON.stringify(cur));
+      row.classList.toggle('done');
+    });
+    root.appendChild(row);
+  });
+}
+
+// ============= INFO =============
+function renderInfo(){
+  const root = $('#info-panel');
+  root.replaceChildren();
+  const sections = [
+    {ico:'✈️', title:'비행', rows:TRIP.info.flights},
+    {ico:'🚗', title:'렌트카', rows:TRIP.info.rental},
+    {ico:'🏠', title:'Bellano 숙소', rows:TRIP.info.bellano},
+    {ico:'🚨', title:'응급 / 비상', rows:TRIP.info.emergency},
+    {ico:'📱', title:'유용한 앱', rows:TRIP.info.apps}
+  ];
+  sections.forEach(s => {
+    const card = el('div', {cls:'info-card'});
+    const h = el('h3', {children:[
+      el('span', {cls:'ico', text:s.ico}),
+      document.createTextNode(s.title)
+    ]});
+    card.appendChild(h);
+    s.rows.forEach(([k, v]) => {
+      card.appendChild(el('div', {cls:'info-row', children:[
+        el('div', {cls:'k', text:k}),
+        el('div', {cls:'v', text:v})
+      ]}));
+    });
+    root.appendChild(card);
+  });
+}
+
+// ============= SPOTS =============
+function renderSpots(){
+  const root = $('#spots-panel');
+  root.replaceChildren();
+  Object.entries(TRIP.spots).forEach(([city, items]) => {
+    root.appendChild(el('div', {cls:'city-h', text:'// ' + city}));
+    items.forEach(s => {
+      const tagCls = 'spot-tag' + (s.tag === 'must' ? ' must' : '');
+      root.appendChild(el('div', {cls:'spot', children:[
+        el('div', {cls:'spot-head', children:[
+          el('div', {cls:'spot-name', text:s.name}),
+          el('div', {cls:tagCls, text:s.tag})
+        ]}),
+        el('div', {cls:'spot-desc', text:s.desc})
+      ]}));
+    });
+  });
+}
+
+// ============= EXPENSES =============
+function getExpenses(){ return JSON.parse(localStorage.getItem('expenses') || '[]'); }
+function saveExpenses(arr){ localStorage.setItem('expenses', JSON.stringify(arr)); }
+
+function renderExpenses(){
+  const exp = getExpenses();
+  const total = exp.reduce((s, e) => s + e.amt, 0);
+  const left = TRIP.budget - total;
+  const pct = Math.min(100, (total / TRIP.budget) * 100);
+  $('#budget-spent').textContent = '€' + total.toFixed(2);
+  $('#budget-left').textContent = '€' + left.toFixed(2);
+  $('#budget-left').className = 'b-val big ' + (left < 0 ? 'amber' : 'green');
+  $('#progress-fill').style.width = pct + '%';
+  $('#progress-fill').className = 'progress-fill' + (left < 0 ? ' over' : '');
+
+  const byCat = {};
+  exp.forEach(e => byCat[e.cat] = (byCat[e.cat] || 0) + e.amt);
+  const catLabels = {'🍝':'식비','🚆':'교통','🏨':'숙박','🎫':'액티비티','🛍':'쇼핑','☕':'카페','📦':'기타'};
+  const catRoot = $('#cat-summary');
+  catRoot.replaceChildren();
+  Object.entries(byCat).forEach(([cat, amt]) => {
+    catRoot.appendChild(el('div', {cls:'cat-cell', children:[
+      el('div', {cls:'cat-cell-label', text:cat + ' ' + (catLabels[cat] || '')}),
+      el('div', {cls:'cat-cell-val', text:'€' + amt.toFixed(2)})
+    ]}));
+  });
+
+  const list = $('#expenses-list');
+  list.replaceChildren();
+  if(exp.length === 0){
+    list.appendChild(el('div', {cls:'empty', text:'아직 지출이 없어요. 트립 시작하면 입력해주세요!'}));
+    return;
+  }
+  exp.slice().reverse().forEach((e, idx) => {
+    const realIdx = exp.length - 1 - idx;
+    const date = new Date(e.ts).toLocaleString('ko-KR', {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
+    const delBtn = el('button', {cls:'exp-del', text:'×', attrs:{type:'button', 'aria-label':'삭제'}});
+    delBtn.addEventListener('click', () => {
+      const cur = getExpenses();
+      cur.splice(realIdx, 1);
+      saveExpenses(cur);
+      renderExpenses();
+    });
+    list.appendChild(el('div', {cls:'exp', children:[
+      el('div', {cls:'exp-cat', text:e.cat}),
+      el('div', {cls:'exp-info', children:[
+        el('div', {cls:'exp-title', text:e.title}),
+        el('div', {cls:'exp-meta', text:date})
+      ]}),
+      el('div', {cls:'exp-amt', text:'€' + e.amt.toFixed(2)}),
+      delBtn
+    ]}));
+  });
+}
+
+$('#exp-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const title = $('#exp-title').value.trim();
+  const amt = parseFloat($('#exp-amt').value);
+  const cat = $('#exp-cat').value;
+  if(!title || isNaN(amt) || amt < 0) return;
+  const exp = getExpenses();
+  exp.push({title:title.slice(0, 80), amt, cat, ts: Date.now()});
+  saveExpenses(exp);
+  $('#exp-title').value = '';
+  $('#exp-amt').value = '';
+  renderExpenses();
+});
+
+// ============= TABS =============
+$$('.tab').forEach(t => t.addEventListener('click', () => {
+  $$('.tab').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  const panel = t.dataset.tab;
+  $$('.panel').forEach(p => p.classList.remove('active'));
+  $('[data-panel="' + panel + '"]').classList.add('active');
+}));
+
+// ============= COUNTDOWN =============
+function tick(){
+  const target = new Date(TRIP.start).getTime();
+  const diff = target - Date.now();
+  if(diff <= 0){
+    const cd = $('#countdown');
+    cd.replaceChildren();
+    const cell = el('div', {cls:'cd-cell', attrs:{style:'flex:1'}, children:[
+      el('div', {cls:'cd-num', text:'TRIP IS LIVE', attrs:{style:'color:var(--pink);font-size:16px'}}),
+      el('div', {cls:'cd-label', text:'enjoy ♥'})
+    ]});
+    cd.appendChild(cell);
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  $('#cd-d').textContent = String(d).padStart(2, '0');
+  $('#cd-h').textContent = String(h).padStart(2, '0');
+  $('#cd-m').textContent = String(m).padStart(2, '0');
+  $('#cd-s').textContent = String(s).padStart(2, '0');
+}
+
+renderItinerary();
+renderBookings();
+renderInfo();
+renderSpots();
+renderExpenses();
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
