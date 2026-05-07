@@ -65,6 +65,18 @@
   .row-text b{font-weight:600;color:var(--text)}
   .stay{margin-top:14px;padding:10px 12px;background:var(--panel-2);border-radius:8px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
   .stay .key{color:var(--pink)}
+  .notes{margin-top:14px}
+  .notes-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .notes-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase}
+  .notes-status{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em;transition:color 0.2s}
+  .notes-status.saved{color:var(--green)}
+  .notes-area{width:100%;min-height:90px;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-family:inherit;font-size:13px;line-height:1.5;outline:none;resize:vertical;transition:border-color 0.15s}
+  .notes-area:focus{border-color:var(--cyan)}
+  .notes-area::placeholder{color:var(--dim)}
+  .notes-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .notes-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:inherit;font-size:11px;cursor:pointer;transition:all 0.15s;font-weight:500}
+  .notes-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+  .notes-btn.danger:hover{border-color:var(--red);color:var(--red)}
   .checklist{display:flex;flex-direction:column;gap:8px}
   .check{display:flex;align-items:center;gap:14px;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s}
   .check:hover{border-color:var(--dim)}
@@ -534,7 +546,62 @@ function renderItinerary(){
       el('span', {cls:'key', text:'STAY'})
     ]});
     stay.appendChild(document.createTextNode(' · ' + d.stay));
-    const body = el('div', {cls:'day-body', children:[sched, stay]});
+
+    // Notes section (per-day, localStorage)
+    const noteKey = 'note-day-' + d.n;
+    const status = el('div', {cls:'notes-status', text:'localStorage'});
+    const ta = el('textarea', {cls:'notes-area', attrs:{
+      placeholder:'이 날의 노트… (자동 저장)',
+      maxlength:'4000'
+    }});
+    ta.value = localStorage.getItem(noteKey) || '';
+    let saveTimer = null;
+    ta.addEventListener('input', () => {
+      status.textContent = '저장 중…';
+      status.classList.remove('saved');
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        localStorage.setItem(noteKey, ta.value);
+        status.textContent = '✓ 저장됨';
+        status.classList.add('saved');
+        setTimeout(() => { status.textContent = 'localStorage'; status.classList.remove('saved'); }, 1500);
+      }, 400);
+    });
+
+    const copyBtn = el('button', {cls:'notes-btn', attrs:{type:'button'}, text:'📋 Discord 공유용 복사'});
+    copyBtn.addEventListener('click', async () => {
+      const text = `📅 Day ${d.n} (${d.date}) — ${d.title}\n\n${ta.value || '(노트 없음)'}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = '✓ 복사됨';
+        setTimeout(() => { copyBtn.textContent = orig; }, 1500);
+      } catch {
+        copyBtn.textContent = '복사 실패';
+      }
+    });
+
+    const clearBtn = el('button', {cls:'notes-btn danger', attrs:{type:'button'}, text:'🗑 지우기'});
+    clearBtn.addEventListener('click', () => {
+      if (!ta.value || confirm('이 날의 노트를 지울까요?')) {
+        ta.value = '';
+        localStorage.removeItem(noteKey);
+        status.textContent = '✓ 지움';
+        status.classList.add('saved');
+        setTimeout(() => { status.textContent = 'localStorage'; status.classList.remove('saved'); }, 1500);
+      }
+    });
+
+    const notes = el('div', {cls:'notes', children:[
+      el('div', {cls:'notes-head', children:[
+        el('div', {cls:'notes-label', text:'NOTES'}),
+        status
+      ]}),
+      ta,
+      el('div', {cls:'notes-actions', children:[copyBtn, clearBtn]})
+    ]});
+
+    const body = el('div', {cls:'day-body', children:[sched, stay, notes]});
     day.append(head, body);
     root.appendChild(day);
   });
