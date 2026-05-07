@@ -105,6 +105,10 @@
   .pri-now{background:rgba(224,72,72,0.18);color:var(--red)}
   .pri-week{background:rgba(240,163,94,0.15);color:var(--amber)}
   .pri-later{background:rgba(94,196,214,0.12);color:var(--cyan)}
+  .check.user{border-left:2px solid var(--pink)}
+  .check-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:20px;padding:4px 10px;line-height:1;flex-shrink:0;border-radius:4px;transition:all 0.15s}
+  .check-del:hover{color:var(--red);background:rgba(224,72,72,0.08)}
+  .user-todos-divider{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pink);letter-spacing:0.2em;margin:14px 0 6px;padding:6px 0;border-top:1px dashed var(--border)}
   .budget-card{background:linear-gradient(135deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
   .b-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
   .b-label{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;text-transform:uppercase}
@@ -226,7 +230,21 @@
 </nav>
 
 <section class="panel active" data-panel="itinerary" id="itinerary"></section>
-<section class="panel" data-panel="bookings"><div class="checklist" id="checklist"></div></section>
+<section class="panel" data-panel="bookings">
+  <form class="add-form" id="todo-form">
+    <input type="text" id="todo-title" placeholder="할 일 추가… (예: 여행자 보험 가입)" required maxlength="120" />
+    <div class="form-row">
+      <input type="text" id="todo-meta" placeholder="메모 (선택)" maxlength="120" />
+      <select id="todo-pri">
+        <option value="now">🔴 NOW</option>
+        <option value="week" selected>🟠 WEEK</option>
+        <option value="later">🔵 LATER</option>
+      </select>
+    </div>
+    <button class="btn" type="submit">+ To Do 추가</button>
+  </form>
+  <div class="checklist" id="checklist"></div>
+</section>
 <section class="panel" data-panel="expenses">
   <div class="budget-card">
     <div class="b-row"><div class="b-label">예산</div><div class="b-val" id="budget-total">€2,127</div></div>
@@ -437,6 +455,20 @@ const TRIP = {
       ['Navigazione Lago di Como','호수 페리 시간표'],
       ['Google Maps Offline','인터넷 끊겨도 OK'],
       ['Splitwise','둘이서 비용 분담']
+    ],
+    foodTypes:[
+      ['Trattoria','🥇 맛집 확률 1위 — 로컬 식당, 합리적 가격, 현지인 많으면 거의 성공'],
+      ['Ristorante','🍷 정식 레스토랑 — 고급 분위기/기념일용, 가격대 높은 편'],
+      ['Pizzeria','🍕 피자 전문 — 화덕 있는 집이면 기본 이상, 메뉴 단순할수록 ↑'],
+      ['Osteria','🍷 와인 + 소품 요리 — 캐주얼, 동네 사랑방 분위기'],
+      ['Bar / Cafè','☕ 아침/에스프레소/간단한 점심 — 워케이션 OK']
+    ],
+    foodRules:[
+      ['✅ 찾기','현지인 많은 집 + 골목 안쪽 + 웨이팅/예약 있는 집'],
+      ['🚫 피하기','직원이 밖에서 호객 / 메뉴판에 사진+여러 언어 / 메인 관광지 한복판'],
+      ['평점 기준','소도시 4.2~4.4 / 큰 도시 4.3+ / 리뷰 1000개 이상'],
+      ['관광지 주의','이름만 가져다 쓴 가짜 가게 多 → 리뷰 + 현지인 비율 꼭 확인'],
+      ['3-step 체크','① Trattoria 먼저 찾기  ② 현지인 많은 집 들어가기  ③ 구글 4.3+ & 1000+ 리뷰']
     ]
   },
   docs: [
@@ -676,36 +708,89 @@ function renderItinerary(){
   });
 }
 
-// ============= BOOKINGS =============
-function renderBookings(){
+// ============= BOOKINGS / TODOS =============
+function getUserTodos(){ return JSON.parse(localStorage.getItem('userTodos') || '[]'); }
+function saveUserTodos(arr){ localStorage.setItem('userTodos', JSON.stringify(arr)); }
+
+function buildCheckRow(b, isUser){
   const saved = JSON.parse(localStorage.getItem('bookings') || '{}');
+  const done = saved[b.id] !== undefined ? saved[b.id] : b.done;
+  const priLabel = {now:'NOW', week:'WEEK', later:'LATER'}[b.priority];
+  const titleEl = el('div', {cls:'check-title', children:[
+    el('span', {cls:'check-title-text', text:b.title}),
+    el('span', {cls:'pri pri-' + b.priority, text:priLabel})
+  ]});
+  const children = [
+    el('div', {cls:'checkbox'}),
+    el('div', {cls:'check-info', children:[
+      titleEl,
+      b.meta ? el('div', {cls:'check-meta', text:b.meta}) : null
+    ].filter(Boolean)})
+  ];
+  if(b.cost) children.push(el('div', {cls:'check-cost', text:'€' + b.cost}));
+  if(isUser){
+    const delBtn = el('button', {cls:'check-del', attrs:{type:'button', 'aria-label':'삭제'}, text:'×'});
+    delBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      if(!confirm('이 To Do를 삭제할까요?')) return;
+      const cur = getUserTodos().filter(t => t.id !== b.id);
+      saveUserTodos(cur);
+      const savedMap = JSON.parse(localStorage.getItem('bookings') || '{}');
+      delete savedMap[b.id];
+      localStorage.setItem('bookings', JSON.stringify(savedMap));
+      renderBookings();
+    });
+    children.push(delBtn);
+  }
+  const row = el('div', {cls:'check' + (done?' done':'') + (isUser?' user':''), attrs:{'data-id':b.id}, children});
+  row.addEventListener('click', () => {
+    const cur = JSON.parse(localStorage.getItem('bookings') || '{}');
+    cur[b.id] = !row.classList.contains('done');
+    localStorage.setItem('bookings', JSON.stringify(cur));
+    row.classList.toggle('done');
+  });
+  return row;
+}
+
+function renderBookings(){
   const root = $('#checklist');
   root.replaceChildren();
-  TRIP.bookings.forEach(b => {
-    const done = saved[b.id] !== undefined ? saved[b.id] : b.done;
-    const priLabel = {now:'NOW', week:'WEEK', later:'LATER'}[b.priority];
-    const titleEl = el('div', {cls:'check-title', children:[
-      el('span', {cls:'check-title-text', text:b.title}),
-      el('span', {cls:'pri pri-' + b.priority, text:priLabel})
-    ]});
-    const children = [
-      el('div', {cls:'checkbox'}),
-      el('div', {cls:'check-info', children:[
-        titleEl,
-        el('div', {cls:'check-meta', text:b.meta})
-      ]})
-    ];
-    if(b.cost) children.push(el('div', {cls:'check-cost', text:'€' + b.cost}));
-    const row = el('div', {cls:'check' + (done?' done':''), attrs:{'data-id':b.id}, children});
-    row.addEventListener('click', () => {
-      const cur = JSON.parse(localStorage.getItem('bookings') || '{}');
-      cur[b.id] = !row.classList.contains('done');
-      localStorage.setItem('bookings', JSON.stringify(cur));
-      row.classList.toggle('done');
+  TRIP.bookings.forEach(b => root.appendChild(buildCheckRow(b, false)));
+  const userTodos = getUserTodos();
+  if(userTodos.length){
+    root.appendChild(el('div', {cls:'user-todos-divider', text:'/ MY TODOS'}));
+    userTodos.forEach(t => root.appendChild(buildCheckRow(t, true)));
+  }
+}
+
+function setupTodoForm(){
+  const form = document.getElementById('todo-form');
+  if(!form) return;
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const titleEl = document.getElementById('todo-title');
+    const metaEl = document.getElementById('todo-meta');
+    const priEl = document.getElementById('todo-pri');
+    const title = titleEl.value.trim();
+    const meta = metaEl.value.trim();
+    const pri = priEl.value;
+    if(!title) return;
+    const todos = getUserTodos();
+    todos.push({
+      id: 'user-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
+      title: title.slice(0, 120),
+      meta: meta.slice(0, 120),
+      priority: pri,
+      cost: 0,
+      done: false
     });
-    root.appendChild(row);
+    saveUserTodos(todos);
+    titleEl.value = '';
+    metaEl.value = '';
+    renderBookings();
   });
 }
+setupTodoForm();
 
 // ============= INFO =============
 function renderInfo(){
@@ -719,7 +804,9 @@ function renderInfo(){
     {ico:'🚆', title:'기차 2 — Bologna→Bergamo', rows:TRIP.info.train2},
     {ico:'⚠️', title:'기차 티켓 규칙', rows:TRIP.info.trainRules},
     {ico:'🚨', title:'응급 / 비상', rows:TRIP.info.emergency},
-    {ico:'📱', title:'유용한 앱', rows:TRIP.info.apps}
+    {ico:'📱', title:'유용한 앱', rows:TRIP.info.apps},
+    {ico:'🍝', title:'음식 + 맛집 — 식당 종류', rows:TRIP.info.foodTypes},
+    {ico:'🔍', title:'음식 + 맛집 — 진짜 맛집 찾는 법', rows:TRIP.info.foodRules}
   ];
   sections.forEach(s => {
     const card = el('div', {cls:'info-card'});
