@@ -164,9 +164,9 @@
 <section class="panel" data-panel="bookings"><div class="checklist" id="checklist"></div></section>
 <section class="panel" data-panel="expenses">
   <div class="budget-card">
-    <div class="b-row"><div class="b-label">예산</div><div class="b-val" id="budget-total">€2,212</div></div>
+    <div class="b-row"><div class="b-label">예산</div><div class="b-val" id="budget-total">€2,127</div></div>
     <div class="b-row"><div class="b-label">사용</div><div class="b-val amber" id="budget-spent">€0</div></div>
-    <div class="b-row"><div class="b-label">남음</div><div class="b-val big green" id="budget-left">€2,212</div></div>
+    <div class="b-row"><div class="b-label">남음</div><div class="b-val big green" id="budget-left">€2,127</div></div>
     <div class="progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
   </div>
   <form class="add-form" id="exp-form">
@@ -198,7 +198,7 @@
 <script>
 const TRIP = {
   start: '2026-06-09T12:00:00+02:00',
-  budget: 2212,
+  budget: 2127,
   days: [
     { n:1, date:'6/9 (화)', title:'Köln → Bellano', sub:'비행 + 운전 + 호수 마을 도착', stay:'Bellano Airbnb · Frazione Bonzeno 22',
       schedule:[
@@ -232,17 +232,20 @@ const TRIP = {
         ['17:00','Bellano 복귀',false],
         ['19:00','마지막 호수 디너',false]
       ]},
-    { n:4, date:'6/12 (금)', title:'Bellano → Milano → Bologna', sub:'차 반납 + 고속열차 + 미식 도착', stay:'Bologna Airbnb',
+    { n:4, date:'6/12 (금)', title:'Bellano → Milano → Bologna', sub:'차 반납 + 기차 + 미식 도착', stay:'Bologna Airbnb',
       schedule:[
         ['08:00','아침 + 짐 정리 + 마지막 워케이션 1h',false],
         ['10:30','Airbnb 체크아웃 → Milano Linate 출발 (1.5시간)',true],
         ['13:00','렌트카 반납 (Linate Airport)',true],
         ['13:30','M4 지하철 → Milano Centrale (15분)',false],
-        ['14:30','Duomo 광장 빠르게 + 점심',false],
-        ['15:30','Frecciarossa Milano → Bologna (1시간)',true],
-        ['16:30','Bologna 도착 · Airbnb 체크인',true],
-        ['18:00','Piazza Maggiore + Asinelli 탑 (예약 필요)',false],
-        ['20:00','Trattoria Anna Maria — Tagliatelle al ragù (예약 필수)',false]
+        ['14:00','Centrale 도착, 짐 보관, Duomo 광장 + 점심',false],
+        ['16:15','Milano Centrale 출발 (Regionale TTPER 2473)',true],
+        ['17:46','Parma 도착 → 환승 (12분)',false],
+        ['17:58','Parma 출발 (Regionale TTPER 17419)',false],
+        ['19:10','Bologna Centrale 도착',true],
+        ['19:30','Airbnb 체크인',true],
+        ['20:00','Piazza Maggiore 야경 산책',false],
+        ['21:00','Trattoria Anna Maria 디너 (예약 권장)',false]
       ]},
     { n:5, date:'6/13 (토)', title:'Bologna 풀데이 — 미식', sub:'시장 + 두 탑 + 포르티코', stay:'Bologna Airbnb (마지막 밤)',
       schedule:[
@@ -251,21 +254,28 @@ const TRIP = {
         ['12:30','Mercato di Mezzo 미식 점심',false],
         ['14:00','산토 스테파노 광장 + 7개 교회',false],
         ['15:30','포르티코 산책 (UNESCO 명물 지붕 골목)',false],
+        ['17:00','Asinelli 탑 — 두 탑 중 오를 수 있는 거 (예약 필요)',true],
         ['(옵션)','Modena 당일치기 (기차 30분, 발사믹 본고장)',false],
         ['20:00','Osteria dell\'Orsa 디너',false]
       ]},
-    { n:6, date:'6/14 (일)', title:'Bologna → Bergamo', sub:'기차 이동 + Città Alta 마지막 밤', stay:'Bergamo Airbnb',
+    { n:6, date:'6/14 (일)', title:'Bologna → Bergamo', sub:'Verona 경유 + Città Alta 마지막 밤', stay:'Bergamo Airbnb',
       schedule:[
         ['08:00','카페 워케이션 1-2h (Forno Brisa)',false],
         ['10:30','Airbnb 체크아웃, 마지막 산책',false],
-        ['12:00','점심 (호텔 근처)',false],
-        ['13:30','Bologna → Milano (1h) → 환승 → Bergamo (50분)',true],
-        ['16:30','Bergamo 도착 → Airbnb 체크인',true],
-        ['17:00','Funicolare 케이블카 → Città Alta',false],
-        ['17:30','Piazza Vecchia, Santa Maria Maggiore',false],
-        ['18:30','성벽 산책 (UNESCO) — 알프스 노을',false],
-        ['20:00','Città Alta 디너',false],
-        ['22:00','짐 싸고 일찍 취침',false]
+        ['11:30','점심 (호텔 근처)',false],
+        ['13:00','Bologna Centrale 도착',false],
+        ['14:10','Bologna 출발 (Regionale Veloce 3844)',true],
+        ['15:35','Verona Porta Nuova 도착 → 환승 (8분)',false],
+        ['15:43','Verona 출발 (Regionale Trenord 2636)',false],
+        ['16:39','Rovato 도착 → 환승 (33분)',false],
+        ['17:12','Rovato 출발 (Regionale Trenord 10134)',false],
+        ['17:54','Bergamo 도착',true],
+        ['18:00','Airbnb 체크인',true],
+        ['18:30','Funicolare 케이블카 → Città Alta',false],
+        ['19:00','Piazza Vecchia, Santa Maria Maggiore',false],
+        ['19:30','성벽 산책 (UNESCO) — 알프스 노을',false],
+        ['20:30','Città Alta 디너',false],
+        ['22:30','짐 싸고 일찍 취침',false]
       ]},
     { n:7, date:'6/15 (월)', title:'귀환 — Bergamo → Köln', sub:'새벽 비행', stay:'— (집)',
       schedule:[
@@ -282,8 +292,8 @@ const TRIP = {
     {id:'rental', title:'렌트카 (Auto Europe via Check24)', meta:'BGY 픽업 → Linate 반납 · 풀커버', cost:282, priority:'now', done:false},
     {id:'bologna', title:'Bologna Airbnb 2박', meta:'6/12-14 · 위치/평점 확인 후', cost:194, priority:'now', done:false},
     {id:'bergamo', title:'Bergamo Airbnb 1박', meta:'6/14-15 · 5⭐ 12후기', cost:81, priority:'now', done:false},
-    {id:'train1', title:'Frecciarossa Milano→Bologna', meta:'6/12 15:30 · 미리 €19-29 vs 당일 €60+', cost:60, priority:'week', done:false},
-    {id:'train2', title:'기차 Bologna→Bergamo', meta:'6/14 오후 · 환승 Milano', cost:100, priority:'week', done:false},
+    {id:'train1', title:'Trenitalia Milano→Bologna 2인', meta:'6/12 16:15 출발 · Parma 환승 · 코드 2825205101/02', cost:36, priority:'now', done:true},
+    {id:'train2', title:'Trenitalia Bologna→Bergamo 2인', meta:'6/14 14:10 출발 · Verona+Rovato 환승 · 코드 2825209291/92', cost:39, priority:'now', done:true},
     {id:'balbianello', title:'Villa del Balbianello', meta:'6/10 · fondoambiente.it · 시간 지정', cost:44, priority:'week', done:false},
     {id:'asinelli', title:'Asinelli 탑 (Bologna)', meta:'6/12 또는 6/13 · duetorribologna.com', cost:10, priority:'week', done:false},
     {id:'rest1', title:'Trattoria Anna Maria 예약', meta:'6/12 저녁 · Bologna · Tagliatelle al ragù', cost:0, priority:'later', done:false},
@@ -315,6 +325,38 @@ const TRIP = {
       ['주차','주차장 15대 + 위쪽 작은 주차장'],
       ['표시','분홍색 + 해시계 있는 큰 집'],
       ['도착시','SMS로 호스트 콜']
+    ],
+    train1:[
+      ['날짜','6/12 (금)'],
+      ['구간','Milano Centrale → Bologna Centrale'],
+      ['1구간','16:15 → 17:46 Parma · TTPER 2473'],
+      ['환승','Parma 12분'],
+      ['2구간','17:58 → 19:10 · TTPER 17419'],
+      ['좌석','2등석 (Regionale, 좌석 자유)'],
+      ['Tony 코드','2825205101'],
+      ['공주님 코드','2825205102'],
+      ['가격','€18.10/인 (총 €36.20)']
+    ],
+    train2:[
+      ['날짜','6/14 (일)'],
+      ['구간','Bologna Centrale → Bergamo'],
+      ['1구간','14:10 → 15:35 Verona PN · Veloce 3844'],
+      ['환승 1','Verona 8분 (빠르게!)'],
+      ['2구간','15:43 → 16:39 Rovato · Trenord 2636'],
+      ['환승 2','Rovato 33분 여유'],
+      ['3구간','17:12 → 17:54 Bergamo · Trenord 10134'],
+      ['좌석','2등석 (Regionale, 좌석 자유)'],
+      ['Tony 코드','2825209291'],
+      ['공주님 코드','2825209292'],
+      ['가격','€19.50/인 (총 €39.00)']
+    ],
+    trainRules:[
+      ['양도','불가 (이름 등록제)'],
+      ['검표','QR 코드 + 신분증 둘 다 필수'],
+      ['활성화','출발 시각 자동'],
+      ['변경','전날 23:59까지 무제한 / 당일은 출발 전까지 시간만 변경 OK'],
+      ['활성화 후','변경 불가'],
+      ['준비물','핸드폰 + 여권 + (백업 PDF)']
     ],
     emergency:[
       ['응급 (이태리)','112'],
@@ -450,6 +492,9 @@ function renderInfo(){
     {ico:'✈️', title:'비행', rows:TRIP.info.flights},
     {ico:'🚗', title:'렌트카', rows:TRIP.info.rental},
     {ico:'🏠', title:'Bellano 숙소', rows:TRIP.info.bellano},
+    {ico:'🚆', title:'기차 1 — Milano→Bologna', rows:TRIP.info.train1},
+    {ico:'🚆', title:'기차 2 — Bologna→Bergamo', rows:TRIP.info.train2},
+    {ico:'⚠️', title:'기차 티켓 규칙', rows:TRIP.info.trainRules},
     {ico:'🚨', title:'응급 / 비상', rows:TRIP.info.emergency},
     {ico:'📱', title:'유용한 앱', rows:TRIP.info.apps}
   ];
