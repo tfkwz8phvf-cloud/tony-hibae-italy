@@ -153,6 +153,19 @@
   .doc-btn .ico{font-size:13px}
   .doc-code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);background:var(--panel-2);padding:5px 10px;border-radius:4px;display:inline-block;margin-top:4px;letter-spacing:0.05em}
   .doc-warn{font-size:11px;color:var(--muted);background:rgba(240,163,94,0.08);border-left:2px solid var(--amber);padding:8px 10px;margin-top:10px;border-radius:0 4px 4px 0;line-height:1.5}
+  .row{position:relative}
+  .row-wrap{display:flex;flex-direction:column}
+  .row-main{display:flex;gap:14px;align-items:flex-start}
+  .row-note-btn{flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--dim);width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;align-self:center}
+  .row-note-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+  .row-note-btn.has-note{background:rgba(255,91,138,0.12);border-color:var(--pink);color:var(--pink)}
+  .row-note-area{display:none;margin:6px 0 4px 78px;padding:8px 10px;background:var(--panel-2);border:1px solid var(--border);border-left:2px solid var(--pink);border-radius:0 6px 6px 0}
+  .row-note-area.open{display:block}
+  .row-note-area textarea{width:100%;min-height:50px;background:transparent;border:none;color:var(--text);padding:0;font-family:inherit;font-size:12px;line-height:1.5;outline:none;resize:vertical}
+  .row-note-area textarea::placeholder{color:var(--dim);font-style:italic}
+  .row-note-status{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px;text-align:right;transition:color 0.2s}
+  .row-note-status.saved{color:var(--green)}
+  @media (max-width:560px){.row-note-area{margin-left:64px}}
   .notes{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border)}
   .notes-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
   .notes-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pink);letter-spacing:0.2em;font-weight:600}
@@ -541,18 +554,49 @@ function renderItinerary(){
     ]});
     head.addEventListener('click', () => day.classList.toggle('open'));
     const sched = el('div', {cls:'schedule'});
-    d.schedule.forEach(([t, txt, bold]) => {
+    d.schedule.forEach(([t, txt, bold], rowIdx) => {
       const txtEl = el('div', {cls:'row-text'});
       if(bold){
-        const b = el('b', {text:txt});
-        txtEl.appendChild(b);
+        txtEl.appendChild(el('b', {text:txt}));
       } else {
         txtEl.textContent = txt;
       }
-      sched.appendChild(el('div', {cls:'row', children:[
+      const rowNoteKey = 'note-row-' + d.n + '-' + rowIdx;
+      const existingNote = localStorage.getItem(rowNoteKey) || '';
+      const noteBtn = el('button', {cls:'row-note-btn' + (existingNote ? ' has-note' : ''), attrs:{type:'button', 'aria-label':'노트'}, text:'📝'});
+      const noteTa = el('textarea', {attrs:{placeholder:'이 일정 노트…', maxlength:'500'}});
+      noteTa.value = existingNote;
+      const noteStatus = el('div', {cls:'row-note-status', text:''});
+      const noteArea = el('div', {cls:'row-note-area', children:[noteTa, noteStatus]});
+      let rowSaveTimer = null;
+      noteTa.addEventListener('input', () => {
+        noteStatus.textContent = '저장 중…';
+        noteStatus.classList.remove('saved');
+        clearTimeout(rowSaveTimer);
+        rowSaveTimer = setTimeout(() => {
+          if(noteTa.value){
+            localStorage.setItem(rowNoteKey, noteTa.value);
+            noteBtn.classList.add('has-note');
+          } else {
+            localStorage.removeItem(rowNoteKey);
+            noteBtn.classList.remove('has-note');
+          }
+          noteStatus.textContent = '✓ 저장됨';
+          noteStatus.classList.add('saved');
+          setTimeout(() => { noteStatus.textContent = ''; noteStatus.classList.remove('saved'); }, 1500);
+        }, 400);
+      });
+      noteBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        noteArea.classList.toggle('open');
+        if(noteArea.classList.contains('open')) noteTa.focus();
+      });
+      const rowMain = el('div', {cls:'row-main', children:[
         el('div', {cls:'row-time', text:t}),
-        txtEl
-      ]}));
+        txtEl,
+        noteBtn
+      ]});
+      sched.appendChild(el('div', {cls:'row row-wrap', children:[rowMain, noteArea]}));
     });
     const stay = el('div', {cls:'stay', children:[
       el('span', {cls:'key', text:'STAY'})
