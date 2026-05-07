@@ -126,6 +126,21 @@
   .spot-desc{font-size:12px;color:var(--muted);line-height:1.5}
   .city-h{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:0.2em;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
   .city-h:first-child{margin-top:0}
+  .doc-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+  .doc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+  .doc-name{font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
+  .doc-name .doc-ico{font-size:18px}
+  .doc-status{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;padding:3px 8px;border-radius:4px;flex-shrink:0;text-transform:uppercase;font-weight:600}
+  .doc-status.confirmed{background:rgba(92,184,92,0.18);color:var(--green)}
+  .doc-status.pending{background:rgba(240,163,94,0.18);color:var(--amber)}
+  .doc-status.candidate{background:rgba(94,196,214,0.15);color:var(--cyan)}
+  .doc-meta{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .doc-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .doc-btn{display:inline-flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:12px;text-decoration:none;transition:all 0.15s;font-weight:500}
+  .doc-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+  .doc-btn .ico{font-size:13px}
+  .doc-code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);background:var(--panel-2);padding:5px 10px;border-radius:4px;display:inline-block;margin-top:4px;letter-spacing:0.05em}
+  .doc-warn{font-size:11px;color:var(--muted);background:rgba(240,163,94,0.08);border-left:2px solid var(--amber);padding:8px 10px;margin-top:10px;border-radius:0 4px 4px 0;line-height:1.5}
   footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);text-align:center;color:var(--dim);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em}
   footer .heart{color:var(--pink)}
   @media (max-width:560px){
@@ -158,6 +173,7 @@
   <button class="tab" data-tab="expenses">€ 가계부</button>
   <button class="tab" data-tab="info">ⓘ 정보</button>
   <button class="tab" data-tab="spots">★ 장소</button>
+  <button class="tab" data-tab="docs">📎 서류</button>
 </nav>
 
 <section class="panel active" data-panel="itinerary" id="itinerary"></section>
@@ -190,6 +206,7 @@
 </section>
 <section class="panel" data-panel="info" id="info-panel"></section>
 <section class="panel" data-panel="spots" id="spots-panel"></section>
+<section class="panel" data-panel="docs" id="docs-panel"></section>
 
 <footer>CRAFTED BY TARA <span class="heart">♥</span> FOR TONY × HIBAE</footer>
 
@@ -372,6 +389,76 @@ const TRIP = {
       ['Splitwise','둘이서 비용 분담']
     ]
   },
+  docs: [
+    {
+      ico:'✈️', name:'Ryanair 항공권 (왕복)', status:'confirmed',
+      meta:'Köln ↔ Bergamo · 6/9 12:00 / 6/15 06:50 · €70',
+      links:[{label:'Ryanair 사이트', url:'https://www.ryanair.com'}],
+      codes:[],
+      pdfs:[],
+      note:'예약 확인 메일 + 좌석 체크인은 출발 전 24h 내'
+    },
+    {
+      ico:'🏠', name:'Bellano Airbnb (3박)', status:'confirmed',
+      meta:'Frazione Bonzeno 22, Bellano LC · 6/9 15:00 → 6/12 11:00 · €325',
+      links:[{label:'Airbnb 페이지', url:'https://www.airbnb.de/rooms/2941353'}],
+      codes:[{label:'예약 코드', value:'HMBT43CPBN'}],
+      pdfs:[],
+      note:'분홍색 큰 집 + 해시계. 도착 시 SMS로 호스트 콜.'
+    },
+    {
+      ico:'🚗', name:'렌트카 (Auto Europe via Check24)', status:'pending',
+      meta:'BGY 픽업 → Linate 반납 · 6/9 15:00 → 6/12 13:00 · €282',
+      links:[{label:'Check24 사이트', url:'https://www.check24.de/mietwagen/'}],
+      codes:[],
+      pdfs:[],
+      note:'24시간 무료 취소 가능. 예약 확정 후 PDF 받으면 사이트에 추가 부탁'
+    },
+    {
+      ico:'🏨', name:'Bologna Airbnb (2박)', status:'candidate',
+      meta:'6/12 → 6/14 · €194',
+      links:[{label:'Airbnb 후보', url:'https://www.airbnb.de/rooms/50425978'}],
+      codes:[],
+      pdfs:[],
+      note:'후보 — 위치/평점 확인 후 예약'
+    },
+    {
+      ico:'🏨', name:'Bergamo Airbnb (1박, 마지막 밤)', status:'candidate',
+      meta:'6/14 → 6/15 · €81 · 5⭐ 12후기',
+      links:[{label:'Airbnb 후보', url:'https://www.airbnb.de/rooms/1603869400621344771'}],
+      codes:[],
+      pdfs:[],
+      note:'후보 — Bergamo 시내, BGY 공항 5-7km. 새벽 택시 콜 호스트한테 확인'
+    },
+    {
+      ico:'🚆', name:'기차 1 — Milano → Bologna (2인)', status:'confirmed',
+      meta:'6/12 16:15 → 19:10 · Parma 환승 · €36.20',
+      links:[{label:'Trenitalia 앱', url:'https://www.trenitalia.com'}],
+      codes:[
+        {label:'Tony 코드', value:'2825205101'},
+        {label:'공주님 코드', value:'2825205102'}
+      ],
+      pdfs:[
+        {label:'Tony PDF', url:'docs/train1-tony-milano-bologna.pdf'},
+        {label:'공주님 PDF', url:'docs/train1-hibae-milano-bologna.pdf'}
+      ],
+      note:'QR + 신분증 필수. 자동 활성화. 전날 23:59까지 변경 가능.'
+    },
+    {
+      ico:'🚆', name:'기차 2 — Bologna → Bergamo (2인)', status:'confirmed',
+      meta:'6/14 14:10 → 17:54 · Verona+Rovato 환승 · €39.00',
+      links:[{label:'Trenitalia 앱', url:'https://www.trenitalia.com'}],
+      codes:[
+        {label:'Tony 코드', value:'2825209291'},
+        {label:'공주님 코드', value:'2825209292'}
+      ],
+      pdfs:[
+        {label:'Tony PDF', url:'docs/train2-tony-bologna-bergamo.pdf'},
+        {label:'공주님 PDF', url:'docs/train2-hibae-bologna-bergamo.pdf'}
+      ],
+      note:'Verona 환승 8분만! 같은 역 안 옆 플랫폼.'
+    }
+  ],
   spots: {
     Como: [
       {name:'Villa del Balbianello', tag:'must', desc:'007 카지노 로얄 + 스타워즈 촬영지. 페리에서 절벽 정원으로 올라가는 풍경 미친다. 6/10 예약 필수.'},
@@ -534,6 +621,63 @@ function renderSpots(){
   });
 }
 
+// ============= DOCS =============
+function renderDocs(){
+  const root = $('#docs-panel');
+  root.replaceChildren();
+  const intro = el('div', {cls:'doc-warn', text:'⚠️ 이 사이트 URL은 둘만 알고 있어요. 다른 사람한테 공유 금지. 결제·신상 정보 노출됨.'});
+  intro.style.marginBottom = '14px';
+  root.appendChild(intro);
+  const statusLabel = {confirmed:'예약 완료', pending:'대기', candidate:'후보'};
+  TRIP.docs.forEach(d => {
+    const card = el('div', {cls:'doc-card'});
+    card.appendChild(el('div', {cls:'doc-head', children:[
+      el('div', {cls:'doc-name', children:[
+        el('span', {cls:'doc-ico', text:d.ico}),
+        document.createTextNode(d.name)
+      ]}),
+      el('div', {cls:'doc-status ' + d.status, text:statusLabel[d.status] || d.status})
+    ]}));
+    card.appendChild(el('div', {cls:'doc-meta', text:d.meta}));
+    if(d.codes && d.codes.length){
+      const codeWrap = el('div');
+      d.codes.forEach(c => {
+        const codeEl = el('div', {cls:'doc-code'});
+        codeEl.appendChild(document.createTextNode(c.label + ': '));
+        const v = el('span', {text:c.value});
+        v.style.color = 'var(--text)';
+        v.style.fontWeight = '700';
+        codeEl.appendChild(v);
+        codeWrap.appendChild(codeEl);
+        codeWrap.appendChild(document.createTextNode(' '));
+      });
+      card.appendChild(codeWrap);
+    }
+    if((d.links && d.links.length) || (d.pdfs && d.pdfs.length)){
+      const actions = el('div', {cls:'doc-actions'});
+      (d.links || []).forEach(link => {
+        const a = el('a', {cls:'doc-btn', attrs:{href:link.url, target:'_blank', rel:'noopener noreferrer'}, children:[
+          el('span', {cls:'ico', text:'↗'}),
+          document.createTextNode(link.label)
+        ]});
+        actions.appendChild(a);
+      });
+      (d.pdfs || []).forEach(pdf => {
+        const a = el('a', {cls:'doc-btn', attrs:{href:pdf.url, download:'', target:'_blank', rel:'noopener'}, children:[
+          el('span', {cls:'ico', text:'📄'}),
+          document.createTextNode(pdf.label)
+        ]});
+        actions.appendChild(a);
+      });
+      card.appendChild(actions);
+    }
+    if(d.note){
+      card.appendChild(el('div', {cls:'doc-warn', text:d.note}));
+    }
+    root.appendChild(card);
+  });
+}
+
 // ============= EXPENSES =============
 function getExpenses(){ return JSON.parse(localStorage.getItem('expenses') || '[]'); }
 function saveExpenses(arr){ localStorage.setItem('expenses', JSON.stringify(arr)); }
@@ -640,6 +784,7 @@ renderItinerary();
 renderBookings();
 renderInfo();
 renderSpots();
+renderDocs();
 renderExpenses();
 tick();
 setInterval(tick, 1000);
